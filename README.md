@@ -1,10 +1,8 @@
-# Getting Started with Create React App
+# Teste Técnico - Shopper
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Preparos Iniciais
 
-## Available Scripts
-
-In the project directory, you can run:
+No arquivo `globalVars.js`
 
 ### `npm start`
 
