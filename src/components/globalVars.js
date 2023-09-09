@@ -5,7 +5,10 @@ export const colors = {
     theme: "#00B780",
     alert_error: "#F44336",
     alert_success: "#4CAF50",
-    alert_warning: "#EC8E0A"
+    alert_warning: "#EC8E0A",
+    white: '#fff',
+    black: '#000',
+    disabled: '#0001'
 }
 
 export const BASE_URL = 'http://localhost:3333/';

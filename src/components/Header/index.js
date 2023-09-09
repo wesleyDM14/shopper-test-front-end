@@ -1,4 +1,4 @@
-import { Container, HeaderContainer, Logo } from "./style"
+import { Container, HeaderContainer, Logo, Title } from "./style"
 
 
 const Header = () => {
@@ -6,7 +6,7 @@ const Header = () => {
         <HeaderContainer>
             <Container>
                 <Logo />
-                <h5>Header</h5>
+                <Title>Teste Técnico</Title>
             </Container>
         </HeaderContainer>
     )

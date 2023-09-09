@@ -7,6 +7,7 @@ export const HeaderContainer = styled.div`
     background-color: ${colors.header};
     width: 100%;
     align-items: center;
+    margin-bottom: 15px;
 `;
 
 export const Container = styled.div`
@@ -25,5 +26,10 @@ export const Logo = styled.div`
     max-width: 100%;
     width: 140px;
     height: 38px;
-    cursor: pointer;
+`;
+
+export const Title = styled.h5`
+    color: ${colors.white};
+    font-size: 16px;
+    font-weight: bold;
 `;

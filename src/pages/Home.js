@@ -1,11 +1,13 @@
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios";
+import ProgressBar from "@ramonak/react-progress-bar";
 
 import { BASE_URL } from "../components/globalVars";
 
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import ProductsTable from "../components/ProductsList";
+import { AtualizarButton, ButtonsContainer, FileInputLabel, HomeBody, MessageAlert, UploadButton, UploadContainer, ValidationButton } from "../components/globalStyles";
 
 const uploadToServer = (file, onUploadProgress) => {
     let formData = new FormData();
@@ -26,6 +28,8 @@ const Home = () => {
     const [currentFile, setCurrentFile] = useState(undefined);
     const [progress, setProgress] = useState(0);
     const [message, setMessage] = useState("");
+    const [valid, setValid] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const columns = useMemo(
         () => [
@@ -47,6 +51,10 @@ const Home = () => {
                     {
                         Header: "Preço de Venda",
                         accessor: "sales_price"
+                    },
+                    {
+                        Header: "Mensagem",
+                        accessor: "message"
                     }
                 ],
             }
@@ -56,11 +64,14 @@ const Home = () => {
 
     useEffect(() => {
         async function loadData() {
-            const result = await axios.get(BASE_URL + 'api/products/products');
-            setData(result.data.data);
+            if (loading) {
+                const result = await axios.get(BASE_URL + 'api/products/products');
+                setData(result.data.data);
+                setLoading(false);
+            }
         }
         loadData();
-    }, []);
+    }, [loading]);
 
     const selectFile = (event) => {
         setSelectedFiles(event.target.files);
@@ -77,7 +88,7 @@ const Home = () => {
         })
             .then(async (response) => {
                 setMessage(response.data.message);
-                //loaddata
+                setData(response.data.data[0]);
             })
             .catch((err) => {
                 setProgress(0);
@@ -87,45 +98,72 @@ const Home = () => {
         setSelectedFiles(undefined);
     };
 
+    const validation = async () => {
+        if (currentFile === undefined) {
+            alert('Sem Arquivo CSV carregado');
+        } else {
+            let response = await axios.get(BASE_URL + 'api/files/csv/validate');
+            let validateMessage = response.data.message;
+            if (validateMessage !== 'Ok.') {
+                setValid(false);
+            } else {
+                setValid(true);
+            }
+        }
+    }
+
+    const atualizar = async () => {
+        let response = await axios.post(BASE_URL + 'api/files/csv/update');
+        alert(response.data.message);
+        setProgress(0);
+        setMessage("");
+        setCurrentFile(undefined);
+        setSelectedFiles(undefined);
+        setValid(false);
+        setLoading(true);
+    }
+
     return (
         <div>
             <Header />
-            <div>
+            <HomeBody>
                 {currentFile && (
-                    <div className="progress">
-                        <div
-                            className="progress-bar progress-bar-info progress-bar-striped"
-                            role="progressbar"
-                            aria-valuenow={progress}
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            style={{ width: progress + "%" }}
-                        >
-                            {progress}%
-                        </div>
-                    </div>
+                    <ProgressBar completed={progress} />
                 )}
+                <UploadContainer>
+                    <FileInputLabel>
+                        <input type="file" onChange={selectFile} />
+                    </FileInputLabel>
 
-                <label className="btn btn-default">
-                    <input type="file" onChange={selectFile} />
-                </label>
+                    <UploadButton
+                        disabled={!selectedFiles}
+                        onClick={() => upload()}
+                    >
+                        Upload
+                    </UploadButton>
 
-                <button
-                    className="btn btn-success"
-                    disabled={!selectedFiles}
-                    onClick={upload}
-                >
-                    Upload
-                </button>
-
-                <div className="alert alert-light" role="alert">
-                    {message}
-                </div>
+                    <MessageAlert>
+                        {message}
+                    </MessageAlert>
+                </UploadContainer>
                 <div>
                     <ProductsTable columns={columns} data={data} />
                 </div>
-                <Footer />
-            </div>
+
+                <ButtonsContainer>
+                    <ValidationButton onClick={() => validation()}>
+                        Validar
+                    </ValidationButton>
+                    <AtualizarButton
+                        disabled={!valid}
+                        onClick={() => atualizar()}
+                    >
+                        Atualizar
+                    </AtualizarButton>
+                </ButtonsContainer>
+
+            </HomeBody>
+            <Footer />
         </div>
     )
 }

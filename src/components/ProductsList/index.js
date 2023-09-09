@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useTable, useFilters, useSortBy } from "react-table";
+import { Container, StyledIcon, StyledTextInput, TextInputContainer } from "./style";
+
+import { FaSearch } from 'react-icons/fa';
 
 export default function ProductsTable({ columns, data }) {
     const [filterInput, setFilterInput] = useState("");
@@ -27,12 +30,16 @@ export default function ProductsTable({ columns, data }) {
     };
 
     return (
-        <>
-            <input
-                value={filterInput}
-                onChange={handleFilterChange}
-                placeholder={"Search name"}
-            />
+        <Container>
+            <TextInputContainer>
+                <StyledIcon><FaSearch /></StyledIcon>
+                <StyledTextInput
+                    value={filterInput}
+                    onChange={handleFilterChange}
+                    placeholder={"Pesquisar Nome do Produto"}
+                />
+            </TextInputContainer>
+
             <table {...getTableProps()}>
                 <thead>
                     {headerGroups.map(headerGroup => (
@@ -69,6 +76,6 @@ export default function ProductsTable({ columns, data }) {
                     })}
                 </tbody>
             </table>
-        </>
+        </Container>
     )
 }
